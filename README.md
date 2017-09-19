@@ -1,6 +1,6 @@
 # Black DNSync
 
-A cli tool for managing DNS records with conf file
+A interactive cli tool for managing DNS records with conf file
 
 ## Supported DNS Service provider
 
@@ -37,9 +37,16 @@ app-key = xssCB4e4BdCxsMcm33iRNyvqyCzy
 @ TXT "v=spf1 include:mailgun.ors ~all"
 
 @ A 1.1.1.1
-www A hk-ali01
+www A hk-ali01 line=ct ttl=120
 ```
-A record config also support not only IP but also ssh hostname
+A record value support not only IP but also ssh hostname
+
+### Line support
+
+- DNSPOD: ct/cu/cm/edu/oversea
+- ALIDNS: ct/cu/cm/edu/oversea
+- Dnsimple: no
+
 
 ## TODO
 
