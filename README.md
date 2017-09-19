@@ -4,9 +4,9 @@ A interactive cli tool for managing DNS records with conf file
 
 ## Supported DNS Service provider
 
-- Aliyun Intl
-- Dnspod
-- Dnsimple
+- Aliyun DNS Intl
+- DNSPod
+- DNSimple
 
 ## How to use
 
@@ -43,9 +43,9 @@ A record value support not only IP but also ssh hostname
 
 ### Line support
 
-- DNSPOD: ct/cu/cm/edu/oversea
-- ALIDNS: ct/cu/cm/edu/oversea
-- Dnsimple: no
+- DNSpod: ct/cu/cm/edu/oversea
+- Aliyun DNS Intl: ct/cu/cm/edu/oversea
+- DNSimple: no
 
 
 ## TODO
