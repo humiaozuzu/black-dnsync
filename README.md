@@ -4,7 +4,7 @@ A interactive cli tool for managing DNS records with conf file
 
 ## Supported DNS Service provider
 
-- Aliyun DNS Intl
+- Aliyun DNS (Both China and Intl version)
 - DNSPod
 - DNSimple
 - CloudXNS
@@ -19,7 +19,7 @@ blackdnsync --export --domain domain --provider dnspod --app-id id --app-key key
 blackdnsync --sync -c path_to_config.conf [--quite] [--dry-run]
 ```
 
-available providers are dnspod/aliyun/dnsimple
+available providers are dnspod/aliyun/cloudxns/dnsimple
 
 ### preview
 ![preview](https://user-images.githubusercontent.com/300016/31016688-592a30f0-a4eb-11e7-9b59-502e95e63184.png)
@@ -49,10 +49,6 @@ A record value support not only IP but also ssh hostname
 ### Line support
 
 - DNSpod: ct/cu/cm/edu/oversea
-- Aliyun DNS Intl: ct/cu/cm/edu/oversea
+- Aliyun DNS: ct/cu/cm/edu/oversea
+- CloudXNS: ct/cu/cm/edu/oversea
 - DNSimple: no
-
-
-## TODO
-
-- Aliyun CN
