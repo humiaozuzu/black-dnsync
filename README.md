@@ -7,6 +7,7 @@ A interactive cli tool for managing DNS records with conf file
 - Aliyun DNS Intl
 - DNSPod
 - DNSimple
+- CloudXNS
 
 ## How to use
 
@@ -51,4 +52,3 @@ A record value support not only IP but also ssh hostname
 ## TODO
 
 - Aliyun CN
-- CloudXNS
