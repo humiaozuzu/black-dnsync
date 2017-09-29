@@ -298,13 +298,13 @@ class DnsimpleClient(BaseClient):
         super(DnsimpleClient, self).__init__(api_key, api_secret)
         self.base_url = 'https://api.dnsimple.com/v2/'
 
-    def __request(self, method, uri, json=None):
+    def __request(self, method, uri, data=None):
         url = self.base_url + uri
         headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Basic %s' % base64.b64encode(self.api_secret),
         }
-        r = requests.request(method, url, headers=headers, json=json)
+        r = requests.request(method, url, headers=headers, json=data)
         if method == 'delete':
             if r.status_code != 204:
                 r_json = r.json()
