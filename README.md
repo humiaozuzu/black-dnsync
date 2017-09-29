@@ -21,6 +21,10 @@ blackdnsync --sync -c path_to_config.conf [--quite] [--dry-run]
 
 available providers are dnspod/aliyun/dnsimple
 
+### preview
+![preview](https://user-images.githubusercontent.com/300016/31016688-592a30f0-a4eb-11e7-9b59-502e95e63184.png)
+
+
 ## Example conf
 
 ```
