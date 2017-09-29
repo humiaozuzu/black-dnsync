@@ -7,7 +7,10 @@ import sys
 import urllib
 import hmac
 from hashlib import sha1
+from hashlib import md5
 import requests
+import json
+from urllib import urlencode
 
 from record import Record
 
@@ -18,6 +21,8 @@ def get_dns_client(client_name):
         return DnsimpleClient
     elif client_name == 'aliyun':
         return AliyunClient
+    elif client_name == 'cloudxns':
+        return CloudxnsClient
 
 
 class APIError(Exception):
@@ -157,6 +162,116 @@ CLOUDXNS_LINE_MAP = {
 }
 
 CLOUDXNS_LINE_MAP_REV = {v: k for k, v in CLOUDXNS_LINE_MAP.items()}
+
+
+class CloudxnsClient(BaseClient):
+    def __init__(self, api_key, api_secret):
+        super(CloudxnsClient, self).__init__(api_key, api_secret)
+        self.base_url = 'https://www.cloudxns.net/api2/'
+        self.domain_id_map = {}
+
+    def __request(self, method, uri, data=None):
+        url = self.base_url + uri
+        if data:
+            data = json.dumps(data)
+        else:
+            data = ''
+        date = time.strftime('%a %b %d %H:%M:%S %Y', time.localtime())
+        md5_ins = md5()
+        md5_ins.update(self.api_key + url + data + date + self.api_secret)
+        headers = {
+            'Content-Type': 'application/json',
+            'API-FORMAT': 'json',
+            'API-KEY': self.api_key,
+            'API-REQUEST-DATE': date,
+            'API-HMAC': md5_ins.hexdigest(),
+        }
+        r = requests.request(method, url, headers=headers, data=data)
+        r_json = r.json()
+
+        if int(r_json['code']) != 1:
+            raise APIError(r_json)
+        return r_json
+
+    def __to_record(self, record):
+        if record['status'] == 'userstop':
+            raise ValueError('Do not support CloudXNS record disabled status!')
+        try:
+            line = CLOUDXNS_LINE_MAP_REV[int(record['line_id'])]
+        except KeyError:
+            raise UnsupportedLineError(record)
+
+        priority = None
+        if record['type'] == 'MX':
+            priority = int(record['mx'])
+        if record['type'] in ('CNAME', 'MX'):
+            record['value'] = record['value'].rstrip('.')
+        if record['type'] == 'TXT':
+            record['value'] = record['value'].strip('"')
+
+        return Record(record['host'], record['type'], record['value'], int(record['ttl']),
+                   line, priority, record['record_id'])
+
+    def __get_domain_id(self, domain):
+        domain_id = self.domain_id_map.get(domain)
+        if domain_id:
+            return domain_id
+
+        data = self.__request('GET', 'domain')
+        for domain_info in data['data']:
+            self.domain_id_map[domain_info['domain'].rstrip('.')] = int(domain_info['id'])
+        return self.domain_id_map.get(domain)
+
+    def list_records(self, domain):
+        uri = 'record/%s' % self.__get_domain_id(domain)
+        params = {
+            'host_id': 0,
+            'offset': 0,
+            'row_num': 2000,
+        }
+        uri = uri + '?' + urlencode(params)
+        resp = self.__request('GET', uri)
+        records = []
+        for r in resp['data']:
+            record = self.__to_record(r)
+            if record.type == 'NS':
+                continue
+            records.append(record)
+        return records
+
+    def add_record(self, domain, record):
+        domain_id = self.__get_domain_id(domain)
+        data = {
+            'domain_id': domain_id,
+            'host': record.name,
+            'value': record.value,
+            'type': record.type,
+            'ttl': record.ttl,
+        }
+        data['line_id'] = CLOUDXNS_LINE_MAP[record.line]
+        if type == 'MX':
+            data['mx'] = record.priority
+        return self.__request('POST', 'record', data)
+
+    def remove_record(self, domain, record_id):
+        uri = 'record/%s/%s' % (record_id, self.__get_domain_id(domain))
+        return self.__request('DELETE', uri)
+
+    def update_record(self, domain, record_id, record):
+        uri = 'record/%s' % record_id
+        domain_id = self.__get_domain_id(domain)
+        data = {
+            'domain_id': domain_id,
+            'host': record.name,
+            'value': record.value,
+            'type': record.type,
+            'ttl': record.ttl,
+        }
+        data['line_id'] = DNSPOD_LINE_MAP[record.line]
+        if record.type == 'MX':
+            data['mx'] = record.priority
+        return self.__request('PUT', uri, data)
+
 
 ALIDNS_LINE_MAP = {
     'default': 'default',
