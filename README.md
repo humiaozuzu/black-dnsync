@@ -52,3 +52,12 @@ A record value support not only IP but also ssh hostname
 - Aliyun DNS: ct/cu/cm/edu/oversea
 - CloudXNS: ct/cu/cm/edu/oversea
 - DNSimple: no
+
+## TODO (Maybe)
+
+- HE DNS
+- Cloudflare DNS
+- Namecheap DNS
+- ns1
+- Dyn
+- Google Cloud DNS
