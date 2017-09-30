@@ -48,7 +48,7 @@ A record value support not only IP but also ssh hostname
 
 ### Line support
 
-- DNSpod: ct/cu/cm/edu/oversea
+- DNSPod: ct/cu/cm/edu/oversea
 - Aliyun DNS: ct/cu/cm/edu/oversea
 - CloudXNS: ct/cu/cm/edu/oversea
 - DNSimple: no
