@@ -63,7 +63,7 @@ class Record(object):
             items[2] = wrap_txt(items[2])
         if self.line and self.line != 'default':
             items.append('line=%s' % self.line)
-        if self.priority:
+        if self.type == 'MX':
             items.append('priority=%s' % self.priority)
         if show_hostname and self.hostname:
             items[2] =  items[2] + '(%s)' % self.hostname
