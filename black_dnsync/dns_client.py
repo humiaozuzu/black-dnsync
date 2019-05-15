@@ -32,13 +32,6 @@ class APIError(Exception):
         return repr(self.msg)
 
 
-class UnsupportedLineError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-    def __str__(self):
-        return repr(self.msg)
-
-
 class BaseClient(object):
 
     def __init__(self, api_key, api_secret):
@@ -328,10 +321,8 @@ class AliyunClient(BaseClient):
         if record['Status'] == 'Disable':
             raise ValueError('Do not support Aliyun DNS record disabled status!')
 
-        try:
-            line = record['Line']
-        except KeyError:
-            raise UnsupportedLineError(record)
+
+        line = record['Line']
 
         priority = None
         if record['Type'] == 'MX':
