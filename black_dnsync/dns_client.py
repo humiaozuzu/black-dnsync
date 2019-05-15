@@ -32,13 +32,6 @@ class APIError(Exception):
         return repr(self.msg)
 
 
-class UnsupportedLineError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-    def __str__(self):
-        return repr(self.msg)
-
-
 class BaseClient(object):
 
     def __init__(self, api_key, api_secret):
@@ -272,19 +265,6 @@ class CloudxnsClient(BaseClient):
             data['mx'] = record.priority
         return self.__request('PUT', uri, data)
 
-
-ALIDNS_LINE_MAP = {
-    'default': 'default',
-    'ct': 'telecom',
-    'cu': 'unicom',
-    'cm': 'mobile',
-    'edu': 'edu',
-    'oversea': 'oversea',
-}
-
-ALIDNS_LINE_MAP_REV = {v: k for k, v in ALIDNS_LINE_MAP.items()}
-
-
 class AliyunClient(BaseClient):
     def __init__(self, api_key, api_secret):
         super(AliyunClient, self).__init__(api_key, api_secret)
@@ -341,10 +321,8 @@ class AliyunClient(BaseClient):
         if record['Status'] == 'Disable':
             raise ValueError('Do not support Aliyun DNS record disabled status!')
 
-        try:
-            line = ALIDNS_LINE_MAP_REV[record['Line']]
-        except KeyError:
-            raise UnsupportedLineError(record)
+
+        line = record['Line']
 
         priority = None
         if record['Type'] == 'MX':
@@ -381,7 +359,7 @@ class AliyunClient(BaseClient):
             'Value': record.value,
             'TTL': record.ttl,
         }
-        data['Line'] = ALIDNS_LINE_MAP[record.line]
+        data['Line'] = record.line
         if record.type == 'MX':
             data['Priority'] = record.priority
         return self.__request(data)
@@ -402,7 +380,7 @@ class AliyunClient(BaseClient):
             'Value': record.value,
             'TTL': record.ttl,
         }
-        data['Line'] = ALIDNS_LINE_MAP[record.line]
+        data['Line'] = record.line
         if record.type == 'MX':
             data['Priority'] = record.priority
         return self.__request(data)
